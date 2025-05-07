@@ -34,4 +34,6 @@ spec:
             chpasswd: { expire: False }
             runcmd:
               - echo 'Running on $hostname' > /tmp/cloud_name
+              - podman run -itd --name simple-http -p8080:8080 quay.io/automationiberia/ot2024/simple-http:prod
+              - podman run -itd --name simple-http -p8081:8081 quay.io/automationiberia/ot2024/2048:prod
         name: cloudinitdisk
