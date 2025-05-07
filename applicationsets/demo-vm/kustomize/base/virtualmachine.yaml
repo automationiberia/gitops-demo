@@ -34,6 +34,28 @@ spec:
             chpasswd: { expire: False }
             runcmd:
               - echo 'Running on $hostname' > /tmp/cloud_name
-              - podman run -itd --name simple-http -p8080:8080 quay.io/automationiberia/ot2024/simple-http:prod
-              - podman run -itd --name simple-http -p8081:8081 quay.io/automationiberia/ot2024/2048:prod
+              - |
+                cat > /etc/systemd/system/container-httpd.service <<EOF
+                [Unit]
+                Description=Podman container-httpd.service
+                Documentation=man:podman-generate-systemd(1)
+                Wants=network.target
+                After=network-online.target
+
+                [Service]
+                Environment=PODMAN_SYSTEMD_UNIT=%n
+                Restart=on-failure
+                TimeoutStopSec=70
+                ExecStartPre=/bin/rm -f %t/container-httpd.pid %t/container-httpd.ctr-id
+                ExecStart=/usr/bin/podman run --conmon-pidfile %t/container-httpd.pid --cidfile %t/container-httpd.ctr-id --cgroups=no-conmon --replace -d --rm --name httpd -p8080:8080 quay.io/automationiberia/ot2024/simple-http:prod
+                ExecStop=/usr/bin/podman stop --ignore --cidfile %t/container-httpd.ctr-id -t 10
+                ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/container-httpd.ctr-id
+                PIDFile=%t/container-httpd.pid
+                Type=forking
+
+                [Install]
+                WantedBy=multi-user.target default.target
+                EOF
+              - systemctl enable container-httpd.service
+              - systemctl start container-httpd.service
         name: cloudinitdisk
