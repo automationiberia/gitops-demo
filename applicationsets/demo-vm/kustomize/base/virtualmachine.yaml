@@ -30,7 +30,7 @@ spec:
           userData: |-
             #cloud-config
             user: rhel9
-            password: rhel9
+            password: redhat1234
             chpasswd: { expire: False }
             runcmd:
               - echo 'Running on $hostname' > /tmp/cloud_name
