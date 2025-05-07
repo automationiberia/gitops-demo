@@ -6,11 +6,11 @@ spec:
   running: true
   dataVolumeTemplates:
   - metadata:
-      name: demo-vm-ds-fedora
+      name: demo-vm-ds-rhel9
     spec:
       sourceRef:
         kind: DataSource
-        name: fedora
+        name: rhel9
         namespace: openshift-virtualization-os-images
       storage:
         resources: {}
@@ -24,13 +24,13 @@ spec:
           guest: 1024M
       volumes:
       - dataVolume:
-          name: demo-vm-ds-fedora
-        name: demo-vm-ds-fedora
+          name: demo-vm-ds-rhel9
+        name: demo-vm-ds-rhel9
       - cloudInitNoCloud:
           userData: |-
             #cloud-config
-            user: fedora
-            password: fedora
+            user: rhel9
+            password: rhel9
             chpasswd: { expire: False }
             runcmd:
               - echo 'Running on $hostname' > /tmp/cloud_name
