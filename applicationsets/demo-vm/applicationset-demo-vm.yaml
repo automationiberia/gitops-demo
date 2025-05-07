@@ -11,7 +11,7 @@ spec:
           repo: gitops-demo
           labels:
             - preview
- template:
+  template:
     metadata:
       name: 'bgd-{{branch}}-{{number}}'
     spec:
