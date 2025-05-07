@@ -5,7 +5,7 @@ metadata:
 spec:
   generators:
     - pullRequest:
-        requeueAfterSeconds: 120
+        requeueAfterSeconds: 15
         github:
           owner: automationiberia
           repo: gitops-demo
