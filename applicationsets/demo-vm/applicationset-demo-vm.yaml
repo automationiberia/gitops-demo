@@ -4,32 +4,29 @@ metadata:
   name: demo-vm
 spec:
   generators:
-  - list:
-      elements:
-        - name: dev
-          env: dev
-          server: https://kubernetes.default.svc
-        - name: prod
-          env: prod
-          server: https://kubernetes.default.svc
-  template:
+  - pullRequest:
+      requeueAfterSeconds: 120
+      github:
+        owner: automationiberia
+        repo: gitops-demo
+        labels:
+          - preview
+ template:
     metadata:
-      name: "{{name}}-demo-vm"
+      name: 'bgd-{{branch}}-{{number}}'
     spec:
-      project: default
       source:
-        repoURL: https://github.com/automationiberia/gitops-demo.git
-        targetRevision: HEAD
-        path: "applicationsets/demo-vm/kustomize/{{env}}"
-        kustomize:
-          commonAnnotations:
-            managed-cluster: "{{name}}"
-      destination:
-        server: "{{server}}"
-        namespace: "{{name}}-demo-vm"
+        repoURL: 'https://github.com/automationiberia/argocd-preview-environments.git'
+        targetRevision: '{{head_sha}}'
+        path: applicationsets/demo-vm/kustomize/base
+      project: default
       syncPolicy:
-        syncOptions:
-        - CreateNamespace=true
         automated:
-          selfHeal: true
           prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'demo-{{branch}}-{{number}}'
+...
