@@ -6,11 +6,11 @@ spec:
   running: true
   dataVolumeTemplates:
   - metadata:
-      name: demo-vm-ds-fedora
+      name: demo-vm-ds-rhel9
     spec:
       sourceRef:
         kind: DataSource
-        name: fedora
+        name: rhel9
         namespace: openshift-virtualization-os-images
       storage:
         resources: {}
@@ -24,8 +24,8 @@ spec:
           guest: 1024M
       volumes:
       - dataVolume:
-          name: demo-vm-ds-fedora
-        name: demo-vm-ds-fedora
+          name: demo-vm-ds-rhel9
+        name: demo-vm-ds-rhel9
       - cloudInitNoCloud:
           userData: |-
             #cloud-config
@@ -34,4 +34,28 @@ spec:
             chpasswd: { expire: False }
             runcmd:
               - echo 'Running on $hostname' > /tmp/cloud_name
+              - |
+                cat > /etc/systemd/system/container-httpd.service <<EOF
+                [Unit]
+                Description=Podman container-httpd.service
+                Documentation=man:podman-generate-systemd(1)
+                Wants=network.target
+                After=network-online.target
+
+                [Service]
+                Environment=PODMAN_SYSTEMD_UNIT=%n
+                Restart=on-failure
+                TimeoutStopSec=70
+                ExecStartPre=/bin/rm -f %t/container-httpd.pid %t/container-httpd.ctr-id
+                ExecStart=/usr/bin/podman run --conmon-pidfile %t/container-httpd.pid --cidfile %t/container-httpd.ctr-id --cgroups=no-conmon --replace -d --rm --name httpd -p8080:8080 quay.io/automationiberia/ot2024/simple-http:prod
+                ExecStop=/usr/bin/podman stop --ignore --cidfile %t/container-httpd.ctr-id -t 10
+                ExecStopPost=/usr/bin/podman rm --ignore -f --cidfile %t/container-httpd.ctr-id
+                PIDFile=%t/container-httpd.pid
+                Type=forking
+
+                [Install]
+                WantedBy=multi-user.target default.target
+                EOF
+              - systemctl enable container-httpd.service
+              - systemctl start container-httpd.service
         name: cloudinitdisk
