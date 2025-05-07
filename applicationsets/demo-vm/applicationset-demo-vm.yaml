@@ -16,8 +16,8 @@ spec:
       name: 'bgd-{{branch}}-{{number}}'
     spec:
       source:
-        repoURL: 'https://github.com/automationiberia/argocd-preview-environments.git'
-        targetRevision: '{{head_sha}}'
+        repoURL: 'https://github.com/automationiberia/gitops-demo.git'
+        targetRevision: preview-envs
         path: applicationsets/demo-vm/kustomize/base
       project: default
       syncPolicy:
