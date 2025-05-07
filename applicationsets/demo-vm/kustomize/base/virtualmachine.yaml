@@ -29,7 +29,7 @@ spec:
       - cloudInitNoCloud:
           userData: |-
             #cloud-config
-            user: rhel9
+            user: admin
             password: redhat1234
             chpasswd: { expire: False }
             runcmd:
