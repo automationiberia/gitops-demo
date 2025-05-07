@@ -4,13 +4,13 @@ metadata:
   name: demo-vm
 spec:
   generators:
-  - pullRequest:
-      requeueAfterSeconds: 120
-      github:
-        owner: automationiberia
-        repo: gitops-demo
-        labels:
-          - preview
+    - pullRequest:
+        requeueAfterSeconds: 120
+        github:
+          owner: automationiberia
+          repo: gitops-demo
+          labels:
+            - preview
  template:
     metadata:
       name: 'bgd-{{branch}}-{{number}}'
