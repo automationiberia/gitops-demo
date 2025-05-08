@@ -13,7 +13,7 @@ spec:
             - preview
   template:
     metadata:
-      name: 'bgd-{{branch}}-{{number}}'
+      name: 'demo-vm-{{branch}}-{{number}}'
     spec:
       source:
         repoURL: 'https://github.com/automationiberia/gitops-demo.git'
@@ -28,5 +28,5 @@ spec:
           - CreateNamespace=true
       destination:
         server: https://kubernetes.default.svc
-        namespace: 'demo-{{branch}}-{{number}}'
+        namespace: 'demo-vm-{{branch}}-{{number}}'
 ...
